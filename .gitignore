@@ -1,0 +1,14 @@
+# env
+.env
+.env.*
+
+# build
+bin/
+*.out
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

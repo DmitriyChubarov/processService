@@ -17,5 +17,5 @@ func NewProcessLogic(processRepository entity.ProcessRepository) entity.ProcessL
 }
 
 func (p *processLogic) CreateProcess(ctx context.Context, file []byte) (status string, err error) {
-
+	return "ok", nil
 }

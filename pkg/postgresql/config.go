@@ -3,6 +3,8 @@ package postgresql
 import (
 	"fmt"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -11,6 +13,7 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
+	_ = godotenv.Load()
 	postgresHost := os.Getenv("POSTGRES_HOST")
 	postgresPort := os.Getenv("POSTGRES_PORT")
 	postgresUser := os.Getenv("POSTGRES_USER")

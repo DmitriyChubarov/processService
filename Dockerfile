@@ -9,12 +9,15 @@ RUN go mod download
 COPY . .
 
 RUN go build -o processService ./cmd/processing/
+RUN go build -o migrate ./cmd/migrate/
 
 # runtime
 FROM debian:bookworm-slim
 
 WORKDIR /app
 COPY --from=builder /app/processService .
+COPY --from=builder /app/migrate .
+COPY migrations ./migrations
 
-CMD ["./processService"]
+CMD ["sh", "-c", "./migrate && ./processService"]
 

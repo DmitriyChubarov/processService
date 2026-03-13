@@ -1,6 +1,9 @@
 package app
 
 import (
+	"context"
+	"time"
+
 	"github.com/DmitriyChubarov/processing/internal/http"
 	"github.com/DmitriyChubarov/processing/internal/logic"
 	"github.com/DmitriyChubarov/processing/internal/postgres"
@@ -12,12 +15,17 @@ import (
 )
 
 func Run(serviceName string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	log.Info("start service: ", serviceName)
 	config := postgresql.LoadConfig()
 	log.Info("database connection")
 	connection, err := dbr.Open("pgx", config.PostgresDSN, nil)
 	if err != nil {
 		log.Fatal("database connection error ", err)
+	}
+	if err := connection.PingContext(ctx); err != nil {
+		log.Fatal("databes ping error", err)
 	}
 	defer connection.Close()
 

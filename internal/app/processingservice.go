@@ -6,6 +6,7 @@ import (
 
 	"github.com/DmitriyChubarov/processing/internal/http"
 	"github.com/DmitriyChubarov/processing/internal/logic"
+	"github.com/DmitriyChubarov/processing/internal/minio"
 	"github.com/DmitriyChubarov/processing/internal/postgres"
 	"github.com/DmitriyChubarov/processing/pkg/postgresql"
 	"github.com/gocraft/dbr/v2"
@@ -18,6 +19,8 @@ func Run(serviceName string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	log.Info("start service: ", serviceName)
+
+	//postgreSQL
 	config := postgresql.LoadConfig()
 	log.Info("database connection")
 	connection, err := dbr.Open("pgx", config.PostgresDSN, nil)
@@ -29,9 +32,15 @@ func Run(serviceName string) {
 	}
 	defer connection.Close()
 
+	//minIO
+	minIORepository, err := minio.NewMinIO()
+	if err != nil {
+		log.Fatal("minIO connection error ", err)
+	}
+
 	session := connection.NewSession(nil)
 	processRepository := postgres.NewProcessRepository(session)
-	processLogic := logic.NewProcessLogic(processRepository)
+	processLogic := logic.NewProcessLogic(processRepository, minIORepository)
 	processHandlers := http.NewProcessingHandlers(processLogic)
 
 	e := echo.New()

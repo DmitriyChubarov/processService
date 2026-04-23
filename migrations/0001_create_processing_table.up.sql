@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS processing (
     user_id BIGINT,
     original_file_path TEXT,
     processed_file_path TEXT,
-    upload_datetime BIGINT,
-    status TEXT
+    upload_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT DEFAULT 'in_progress'
 );
